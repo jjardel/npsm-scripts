@@ -1,7 +1,8 @@
 # dsphdm.py 
 
-# Analysis routine to subtract stellar density from best-fitting total density
-# found by plotres.py.  Calculates uncertainties by adding noise from a gaussian
+# Analysis routine to subtract stellar density profile from best-fitting 
+# total density profile found by plotres.py.  Calculates uncertainties 
+# by adding noise from a gaussian
 # distribution with (mean = best fitting density, std dev = 1-sigma range in 
 # denstiy) at each point in the profile.
 
