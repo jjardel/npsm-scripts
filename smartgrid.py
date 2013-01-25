@@ -1,3 +1,19 @@
+# smartgrid.py
+
+# Program for determining an optimal set of models to run in order to better
+# sample parameter space.  The models within CHILIM are selected, and their
+# parameters are fractionally increased/decreased by STEP in each dimension.
+# All the relevant batch files and scripts for LONESTAR are created.
+#
+# Requires some set of models to be previously run, with their results stored
+# in res.tab.  Probably best to start exploration of parameter space with a
+# brute force method like rungrid.py.
+
+
+
+
+
+
 from readcol import readcol
 from numpy import *
 from pylab import *
