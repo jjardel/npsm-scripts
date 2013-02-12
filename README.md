@@ -22,4 +22,4 @@ smartgrid.py - Iterative sampling scheme described in Jardel et al (2013).  Dete
     - submit.s 
     - rsubmit.s
 
-
+plotres.py - Statistical analysis routine to determine best-fitting density profile
