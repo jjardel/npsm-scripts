@@ -77,14 +77,15 @@ def SSP_load( Z_in, t_in, band ):
 
 
 # INDIVIDUAL GALAXY PARAMETERS
-kinstart = 47.8
-kinend = 3523.
+kinstart = 100.8
+kinend = 2214.
 galname = 'Sextans'
-dis = 85e3
-xlim0 = 8.
-xlim1 = 4000.
-ylim0 = 1e-2
+dis = 86e3
+xlim0 = 35.
+xlim1 = 4100.
+ylim0 = 1e-3
 ylim1 = 1e2
+# need to fix these for sextans
 Zrange = [ -1.67 - 0.25, -1.67 + 0.25 ]
 trange = [ 5, 7.5, 10., 12.5 ]
 
