@@ -29,7 +29,7 @@ if os.path.isfile( base + galname + '.sql' ):
 
 conn = sql.connect( base + galname + '.sql' )
 cursor = conn.cursor()
-'''
+
 cursor.execute( """CREATE TABLE losvd (modnum integer, ilosvd integer, ivel integer, vel float, data float, data_hi float, data_low float, model float )""")
 cursor.execute( """CREATE TABLE intmom (modnum integer, r float, theta float, v_r float, v_theta float, vrvt float, v_phi float, v_rot float, beta float )""")
 cursor.execute( """CREATE TABLE iter (modnum integer, alpha float, ratio float, entropy float, entchi float )""")
@@ -53,7 +53,7 @@ for model in glob.iglob( 'cres.*' ):
     f.close()
     cursor.execute( "INSERT INTO results VALUES (?,?,?,?,?,?)", res )
 conn.commit()
-'''
+
 
 # construct losvd table
 losvd = []
@@ -79,12 +79,11 @@ for model in glob.iglob( 'intmom.*' ):
     smod = model.strip( 'intmom.mod' )
     modnum = int( smod )
     f = open( model )
+    f.readline()
     for line in f:
         item = []
         item.append( modnum )
-        item.append( int( line.split()[ 0 ] ) )
-        item.append( int( line.split()[ 1 ] ) )
-        for x in line.split()[ 2: ]:
+        for x in line.split():
             item.append( f_float( x ) )
         intmom.append( tuple( item ) )
     f.close()
