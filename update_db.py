@@ -121,13 +121,22 @@ f.close()
 
 
 # --- do the updates
-conn = sql.connect( base + galname + '.sql', timeout = 60 )
-cursor = conn.cursor()
-cursor.executemany( "INSERT INTO losvd VALUES (?,?,?,?,?,?,?,?)", losvd )
-cursor.executemany( "INSERT INTO intmom VALUES (?,?,?,?,?,?,?,?,?)", intmom )
-cursor.executemany( "INSERT INTO gherm VALUES (?,?,?,?,?,?,?)", gherm )
-cursor.execute( "INSERT INTO results VALUES (?,?,?,?,?,?)", res )
-cursor.executemany( "INSERT INTO bin VALUES (?,?,?)", bin )
-conn.commit()
-conn.close()
+try:
+    conn = sql.connect( base + galname + '.sql', timeout = 60 )
+    cursor = conn.cursor()
+    cursor.executemany( "INSERT INTO losvd VALUES (?,?,?,?,?,?,?,?)", losvd )
+    cursor.executemany( "INSERT INTO intmom VALUES (?,?,?,?,?,?,?,?,?)",
+                        intmom )
+    cursor.executemany( "INSERT INTO gherm VALUES (?,?,?,?,?,?,?)", gherm )
+    cursor.execute( "INSERT INTO results VALUES (?,?,?,?,?,?)", res )
+    cursor.executemany( "INSERT INTO bin VALUES (?,?,?)", bin )
+    conn.commit()
+    conn.close()
+except:
+    print 'SQL ERROR FOR MODEL ' + smod
+    f = open( 'database_fail.dat', 'wa' )
+    f.write( smod + '\n' )
+    f.close()
+    conn.close()
+
 
