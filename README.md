@@ -8,6 +8,8 @@ For use with the NPSM code described in Jardel et al (2013 ApJ 763 91)
 
 PROGRAM DESCRIPTIONS:
 
+mkdb.py, update_db.py, mkdb_from_res.py - create/manage SQL database containing model output.
+
 npsm_common.py - contains methods for Galaxy objects
   
     METHODS:
