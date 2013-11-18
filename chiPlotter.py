@@ -260,7 +260,7 @@ def main( **kwargs ):
 
     igal = 2
     for gal in galaxyList:
-        galaxy = ChiPlot( gal, kwargs[ 'scalingFile' ] )
+        galaxy = ChiPlotter( gal, kwargs[ 'scalingFile' ] )
         plot = galaxy.plot()
         plt.subplot( 2, 3, igal )
         print gal + ' done'
