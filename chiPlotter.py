@@ -4,6 +4,14 @@ import matplotlib.pyplot as plt
 import cPickle as pickle
 import csv
 
+# Code to extract LOSVDs, density parameters from PSQL database.
+# Breaks down chi^2 for a given model by LOSVD so I can track which LOSVDs
+# contribute primarily to the total chi^2 of a model.  Makes plots of chi^2
+# as a function of radius for all models.  Also saves to a .csv file for loading with
+# a Shiny dashboard in R.
+
+
+
 class ChiPlotter:
     def __init__( self, galname, scalingFile, deltaChiBase = None ):
         self.galname = galname
