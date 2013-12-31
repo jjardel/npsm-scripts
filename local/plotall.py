@@ -23,9 +23,13 @@ for galname in gallist:
     else:
         bottom = False
     bottom = True
-
+    
     gal = npsm.Galaxy( galname )
-    gal.plot_dmprof( left, bottom )
+    if galname != 'Fornax':
+        gal.plot_dmprof( left, bottom )
+    else:
+        gal.plot_dmprof2( left, bottom )
+    
     
     # call special method for plot_fnx
 

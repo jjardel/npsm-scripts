@@ -1,4 +1,6 @@
-# plot_moments.py
+# plot_moments_univ.py
+
+# MASTER ROUTINE GENERALIZED TO MAKE ALL GH MOMENTS PLOTS
 
 # Plot Gauss-Hermite moments for every line in velbin.dat
 # Has the option to select which angle/radius range you want to plot.
@@ -19,10 +21,13 @@
 
 
 from numpy import *
-from pylab import *
+from matplotlib.pyplot import *
 import math as m
+import os
+import cPickle as pickle
 
-f = open( 'velbin.dat' )
+
+f = open( 'velbin.sav' )
 x = []
 y = []
 names = []
@@ -132,6 +137,17 @@ w, h = figaspect( 1. )
 fig = gcf()
 #figure( figsize = ( w, h ) )
 #sys.exit()
+
+
+# get galaxy name
+pwd = os.getcwd()
+gallist = [ 'draco', 'carina', 'fornax', 'sculptor', 'sex' ]
+for gal in gallist:
+    if gal in pwd:
+        galname = gal.upper()[ 0 ] + gal[ 1: ]
+        if galname == 'Sex':
+            galname = 'Sextans' 
+
 for iplt in range( 0, 4 ):
     subp = fig.add_subplot( 4, 1, iplt + 1 )
     for i in range( 0, nplot ):
@@ -141,24 +157,49 @@ for iplt in range( 0, 4 ):
                         ( theta < angrange[ i ][ 1 ] ) )
         rs = r[ select ]
         subp.semilogx( rs, data[ select, iplt ][ 0 ], fmt[ i ] )
-        subp.semilogx( rs, model[ select, iplt ][ 0 ], 'k' )
+        subp.semilogx( rs, model[ select, iplt ][ 0 ], fmt[ i ][ 0 ] )
         subp.errorbar( rs, data[ select, iplt ][ 0 ], 
                        yerr = errb[ select, iplt ][ 0 ],
                        fmt = None, ecolor = fmt[ i ][ :-1 ] )
+        xlim( xmax = 1.5 * r[ -1 ] )   
+
+        # ------------ write maj axis dispersion profile out
+        """
+        if iplt == 1 and galname == 'Sextans':
+            fw = open( 'sigma.out', 'w' )
+            for i, j, k in zip( rs * 85e3 / 206265, data[ select, iplt ][ 0 ], 
+                                errb[ select, iplt ][ 0 ] ):
+                out = str( i ) + ' ' + str( j ) + ' ' + str( k ) + '\n' 
+                fw.write( out )
+            fw.close()
+        """
+        #-------------
+        if galname == 'Sculptor':
+            xlim( [ 200., 2000. ] )
         if iplt == 0:
             ylabel( '$V$ (km/s)' )
+            ylim([ -5., 5. ] )
+            text( 0.85, 0.8, galname, transform = subp.transAxes )
         elif iplt == 1:
             ylabel( '$\\sigma$ (km/s)' )
+            ylim( [ 0., 15. ] )
         elif iplt == 2:
             ylabel( '$h_3$' )
+            ylim( [-.15, .15 ] )
         else:
             ylabel( '$h_4$' )
             xlabel( 'R (arcsec)' )
-            
+            ylim( [-.15, .15 ] )
         if iplt != 3:
             ax = gca()
             ax.set_xticklabels( [] )
-            
+
 subplots_adjust( hspace = 0. )
-savefig( 'moments.ps' )
+
+
+ax = gca()
+
+savefig( galname.lower() + '_moments.ps' )
+pickle.dump( fig, file( galname.lower() + '_moments.pickle','w' ) )
+
 sys.exit()
