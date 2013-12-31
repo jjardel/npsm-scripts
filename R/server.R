@@ -3,7 +3,7 @@ library( ggplot2 )
 library( gridExtra )
 library( reshape2 )
 
-# Define server logic for random distribution application
+# Define server logic for chi-squared application
 shinyServer(function(input, output) {
 
   losvdFrame = read.csv( 'losvds.csv' )
@@ -15,6 +15,11 @@ shinyServer(function(input, output) {
   bottomBoundary = array( 0, 5 )
 
   minChi = min( densityFrame$chi )
+
+  densParams <- reactive({
+    chiLim <- input$deltaChi + minChi
+    subset( densityFrame, densityFrame$chi < chiLim )
+  })
 
   
   
@@ -102,10 +107,9 @@ shinyServer(function(input, output) {
   })
       
     
-  # Generate a plot of the data. Also uses the inputs to build the 
-  # plot label. Note that the dependencies on both the inputs and
-  # the 'data' reactive expression are both tracked, and all expressions 
-  # are called in the sequence implied by the dependency graph
+  # Generate a plot of the data.
+
+  # DENSITY PROFILE + CHI^2 PLOT
   output$plot <- renderPlot({
     
     # get density data
@@ -115,10 +119,13 @@ shinyServer(function(input, output) {
     d1 = log10( densityProfile$bottomBoundary )
     d2 = log10( densityProfile$topBoundary )
     meanDens = 10^rowMeans( cbind( d1, d2 ) )
+    
     meanDens.df = data.frame( meanDens, densityProfile$radii )
+    names( meanDens.df )[ 2 ] = "radii"
 
     # get LOSVD data
     chi2.df = chiData()
+
     
     densPlot = ggplot( densityProfile, aes( x = radii, y = topBoundary ) ) + geom_ribbon( aes( ymax = topBoundary, ymin = bottomBoundary ), alpha = .4 ) + scale_x_log10() + scale_y_log10() + xlab( "R (arcsec)" ) + ylab( expression( rho ) ) + geom_line( data = meanDens.df, aes( x = radii, y = meanDens ) )
 
@@ -132,10 +139,12 @@ shinyServer(function(input, output) {
     
   })
 
+  # PRINT TOTALS
   output$summary <- renderPrint({
     print( chiTotals() )
   })
 
+  # HISTOGRAM PLOT
   output$histo <- renderPlot({
     hist.df = histoFrame()
     hist.df$total = NULL
@@ -145,11 +154,34 @@ shinyServer(function(input, output) {
 
     melted = melt( hist.df[ ,plotDim ] )
     
-    p = ggplot( melted, aes( value ) ) + geom_histogram( aes( y = ..count.. ), binwidth = 0.05 ) + xlab( expression( chi^2 ) ) + facet_wrap( ~variable, scales = "free" ) 
+    p = ggplot( melted, aes( value ) ) + geom_histogram( aes( y = ..count.. ), binwidth = 0.05 ) + xlab( expression( chi^2 ) ) + ylab( 'Number of Models' ) + facet_wrap( ~variable, scales = "free" ) 
       print( p )
     
     
   })
+
+#  CAN'T GET THIS WORKING  
+#  output$corrplot <- renderPlot({
+#    densParams.df = densParams()
+#    radii = sort( unique( densParams.df$rk ) )
+
+#    nRow = dim( densParams.df )[ 1 ] / 5
+    
+    
+#    t = subset( densParams.df$model, densParams.df$rk == radii[ 1 ] )
+#    newDensFrame = as.data.frame( t )
+                                
+#    for( i in 1:5 ){
+#      tmp = subset( densParams.df$rhok, densParams.df$rk == radii[ i ] )
+#      newDensFrame$tmp = tmp
+#      names( newDensFrame )[ i + 1 ] = as.character( i )
+      
+#    }
+#    newDensFrame$chi = subset( densParams.df$chi, densParams.df$rk == radii[ 1 ] )
+#    p = plotmatrix( newDensFrame[ ,2:6 ], mapping = aes( z = newDensFrame[ ,7 ] ) ) + stat_density2d( aes( z ))
+
+
+#  })
  
   
 })

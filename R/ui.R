@@ -1,6 +1,6 @@
 library(shiny)
 
-# Define UI for random distribution application 
+# Define UI for chi-squared application 
 shinyUI(pageWithSidebar(
 
   # Application title
@@ -11,7 +11,7 @@ shinyUI(pageWithSidebar(
   # element to introduce extra vertical spacing
   sidebarPanel(
     sliderInput("deltaChi", 
-                "chi-squared threshold:", 
+                "Delta chi-squared threshold:", 
                  value = 1.0,
                  min = 0.1, 
                  max = 5.84,
@@ -25,7 +25,7 @@ shinyUI(pageWithSidebar(
                   tabPanel( "Plot", plotOutput("plot"),
                            h4( "Percentage of total contribution to chi-squared" ),
                            verbatimTextOutput( "summary" ) ),
-                  tabPanel( "Correlations",plotOutput( "corrplot" ) ),
+#                  tabPanel( "Correlations",plotOutput( "corrplot" ) ),
                   tabPanel( "1-D Histograms", plotOutput( "histo" ) ) ) )
 ))
 
