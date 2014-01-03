@@ -1,4 +1,3 @@
-from product import product as product2
 from readcol import readcol
 import numpy as np
 import sys
@@ -191,17 +190,30 @@ class Launcher:
 
     def __init__( self, modelsToRun, **kwargs ):
         self.models = modelsToRun
-        self.makeSubmissionScripts( **kwargs )
+        self.initializeScripts( **kwargs )
 
-    def makeSubmissionScripts( self, **kwargs ):
+    def initializeScripts( self, **kwargs ):
         sgeFile = open( kwargs[ 'sgeFilePath' ] )
-        sgeTemplate = sgeFile.readline()
+        sgeTemplate = sgeFile.readlines()
+        self.sgeTemplate = sgeTemplate
+
+        smodlist = os.listdir( kwargs[ 'modlistsDir' ] )
+        modlist = []
+        for mod in smodlist:
+            if 'model' in mod and '.bin' in mod:
+                t1 = mod.replace( 'model', '' )
+                t2 = t1.replace( '.bin', '' )
+                modlist.append( int( t2 ) )
+
+        if not modlist:
+            self.iStart = 1
+        else:
+            self.iStart = max( modlist ) + 1
+
+        print 'starting with model' + ( str( self.iStart ) ).rjust( 5, '0' ) + '.bin'
 
         
 
-        
-        
-        pass
 
     def mkSGEfile( self, **kwargs ):
         pass
