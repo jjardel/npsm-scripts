@@ -192,6 +192,8 @@ class Launcher:
         self.models = modelsToRun
         self.initializeScripts( **kwargs )
 
+        self.loopOverModels( nBatchMax = 96 )
+
     def initializeScripts( self, **kwargs ):
         sgeFile = open( kwargs[ 'sgeFilePath' ] )
         sgeTemplate = sgeFile.readlines()
@@ -212,14 +214,59 @@ class Launcher:
 
         print 'starting with model' + ( str( self.iStart ) ).rjust( 5, '0' ) + '.bin'
 
+        # get radii for bins from param2np output
+        paramFile = open( kwargs[ 'paramFilePath' ] )
+        radius = []
+        for line in paramFile:
+            radius.append( float( line.split()[ 0 ] ) )
+
+        self.radius = radius
+
+        if len( radius ) != kwargs[ 'nk' ]:
+            raise InputError( "your param2np output doesn't have the same number of elements as 'nk' in kwargs" )
+
+
+    def loopOverModels( self, nBatchMax = None ):
+        models = self.models
+
+        i = self.iStart
+        kount = 1
+        nBatch = 0
+
+        for model in models:
+            if kount % nBatchMax == 1:
+                nBatch += 1
+                batchFile, submitFile = self.openBatchFiles( nBatch,
+                                                             nBatchMax = nBatchMax
+                                                             )
+                
+                os.chmod( batchFile, 0754 )
+                self.mkSubmitFile( nBatchMax, batchFile, submitFile )
+
+            # convert model into a string
+            
+                
+
+    def openBatchFiles( self, nBatch, nBatchMax = None ):
+
+        base = 'runbatch' + str( nBatch ).rjust( 2, '0' )
+        fBatch = open( base + '.s', 'w' )
+        fSubmit = open( base + '.sge', 'w' )
+        
+        return fBatch, fSubmit # each is file object designated for writing
+        
         
 
 
-    def mkSGEfile( self, **kwargs ):
-        pass
+    def mkSubmitFile( self, maxProcs, fBatch, fSubmit ):
+        template = self.sgeTemplate
+        template[ 16 ] = template[ 16 ][ :13 ] + str( maxProcs ) + '\n'
+        template[ 37 ] = template[ 37 ][ :22 ] + fBatch.name + '\n'
 
-    def mkrunallFile( self, **kwargs ):
-        pass
+        for line in template:
+            fSubmit.write( line )
+
+
 
     def updateLog( self, **kwargs ):
         pass
