@@ -189,6 +189,20 @@ class Grid:
 
 class Launcher:
 
+    def __init__( self, modelsToRun, **kwargs ):
+        self.models = modelsToRun
+        self.makeSubmissionScripts( **kwargs )
+
+    def makeSubmissionScripts( self, **kwargs ):
+        sgeFile = open( kwargs[ 'sgeFilePath' ] )
+        sgeTemplate = sgeFile.readline()
+
+        
+
+        
+        
+        pass
+
     def mkSGEfile( self, **kwargs ):
         pass
 
@@ -218,6 +232,7 @@ if __name__ == '__main__':
                'resFilePath': 'result/res.tab',
                'gridFilePath': 'grid.in',
                'slopeFilePath': 'slope.in',
+               'sgeFilePath': 'runbatch.sge'
                'monotonic': True,
                'tol':  5e-2
                }
