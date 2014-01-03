@@ -58,24 +58,28 @@ class Models( Results ):
     def inResults( self, model, **kwargs ):
         # can't use np.close because of old shitty numpy on TACC
 
-        for resModel in self.res:
+        results = self.res
+        for resModel in results:
             if self.isclose( model, resModel, **kwargs ):
                 return True
 
         return False
-            
+
     def isclose( self, testMod, resMod, **kwargs ):
         # check if model to be run is close to a model in res.tab
         
         tol = kwargs[ 'tol' ]
-
         flag = True
+
         for a, b in zip( testMod, resMod ):
             if abs( float( a ) / b - 1 ) > tol:
-                flag = False
+                return False
+
 
         return flag
-        
+
+
+
 class Grid:
     def __init__( self, **kwargs ):
         self.readParamFiles( **kwargs )
@@ -182,6 +186,18 @@ class Grid:
                 newmodels.append( list( i ) )
 
         self.models = newmodels
+
+class Launcher:
+
+    def mkSGEfile( self, **kwargs ):
+        pass
+
+    def mkrunallFile( self, **kwargs ):
+        pass
+
+    def updateLog( self, **kwargs ):
+        pass
+    
 
     
 def main( **kwargs ):
