@@ -192,7 +192,7 @@ class Launcher:
         self.models = modelsToRun
         self.initializeScripts( **kwargs )
 
-        self.loopOverModels( nBatchMax = 96 )
+        self.loopOverModels( nBatchMax = 96, **kwargs )
 
     def initializeScripts( self, **kwargs ):
         sgeFile = open( kwargs[ 'sgeFilePath' ] )
@@ -225,13 +225,29 @@ class Launcher:
         if len( radius ) != kwargs[ 'nk' ]:
             raise InputError( "your param2np output doesn't have the same number of elements as 'nk' in kwargs" )
 
+    def stringify( self, model ):
+        s = ''
+        for x in model:
+            s += '{:-f} '.format( x )
 
-    def loopOverModels( self, nBatchMax = None ):
+        return s
+
+    def loopOverModels( self, nBatchMax = None, **kwargs ):
         models = self.models
+        modlistsDir = kwargs[ 'modlistsDir' ]
+        nk = kwargs[ 'nk' ]
 
         i = self.iStart
         kount = 1
         nBatch = 0
+
+        # need to write to slope.list and bh.list too
+        slopeFilePath = modlistsDir + '/slope.list'
+        bhFilePath = modlistsDir + 'bh.list'
+
+        slopeFile = open( slopeFilePath, 'a' )
+        bhFile = open( slopeFilePath, 'a' )
+
 
         for model in models:
             if kount % nBatchMax == 1:
@@ -240,11 +256,32 @@ class Launcher:
                                                              nBatchMax = nBatchMax
                                                              )
                 
-                os.chmod( batchFile, 0754 )
+                os.chmod( batchFile.name, 0754 )
                 self.mkSubmitFile( nBatchMax, batchFile, submitFile )
 
-            # convert model into a string
+            import pdb; pdb.set_trace()
+            # write out modlist file
+            modFile = modlistsDir + '/model' + str( i ).rjust( 5, '0' )
+            out = np.column_stack( ( self.radius, model ) )
+            np.savetxt( modFile, out, fmt = '%-5.5f %-5.5e' )
+
+            # write to slope file
+            slopeFile.write( str( model[ nk + 1 ] ) + '\n' )
+
+            # if using BH
+            try:
+                bhFile.write( ':e5.5 \n'.format( model[ nk + 2 ] ) )
+            except IndexError:
+                print 'Are you sure you want to use a black hole?'
+                bhFile.write( '0\n' )
+
             
+            
+
+            
+            
+
+            import pdb; pdb.set_trace()
                 
 
     def openBatchFiles( self, nBatch, nBatchMax = None ):
@@ -279,6 +316,8 @@ def main( **kwargs ):
     models = Models( grid.models, **kwargs )
     toRun = models.checkForDups( **kwargs )
 
+    launcher = Launcher( toRun, **kwargs )
+
     import pdb; pdb.set_trace()
     
         
@@ -291,7 +330,9 @@ if __name__ == '__main__':
                'resFilePath': 'result/res.tab',
                'gridFilePath': 'grid.in',
                'slopeFilePath': 'slope.in',
-               'sgeFilePath': 'runbatch.sge'
+               'sgeFilePath': 'runbatch.sge',
+               'paramFilePath': 'param/mod.param.bin',
+               'modlistsDir': './modlists',
                'monotonic': True,
                'tol':  5e-2
                }
