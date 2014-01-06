@@ -261,19 +261,31 @@ class Launcher:
 
             import pdb; pdb.set_trace()
             # write out modlist file
-            modFile = modlistsDir + '/model' + str( i ).rjust( 5, '0' )
+
+            sModel = str( i ).rjust( 5, '0' )
+            
+            modFile = modlistsDir + '/model' + sModel
             out = np.column_stack( ( self.radius, model ) )
             np.savetxt( modFile, out, fmt = '%-5.5f %-5.5e' )
 
             # write to slope file
-            slopeFile.write( str( model[ nk + 1 ] ) + '\n' )
+            sSlope = str( model[ nk + 1 ] ) + '\n'
+            slopeFile.write( sSlope )
 
             # if using BH
             try:
-                bhFile.write( ':e5.5 \n'.format( model[ nk + 2 ] ) )
+                sBH = ':e5.5 \n'.format( model[ nk + 2 ] )
             except IndexError:
                 print 'Are you sure you want to use a black hole?'
-                bhFile.write( '0\n' )
+                sBH = '0\n'
+
+            bhFile.write( sBH )
+            out = 'runall.s %(model) %(slope) %(bh)\n' % { 'model': sModel,
+                                                           'slope': sSlope,
+                                                           'bh': sBH
+                                                           }
+
+            fBatch.write( out ) # write the line in runbatchXX.s
 
             
             
