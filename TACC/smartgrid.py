@@ -17,8 +17,47 @@ import math as m
 import os
 from itertools import product
 import rungrid
-    
-class SmartGrid( rungrid.Grid )
+
+class SmartGrid( rungrid.Models ):
+
+    def __init__( self, **kwargs ):
+        self.getResults( **kwargs )
+        self.smartSample( **kwargs )
+        self.checkForDups( **kwargs )
+
+    def readStepFile( self, path ):
+        fp = open( path )
+        step = []
+        for line in path:
+            step.append( float( line.split()[ 1 ] ) )
+
+        self.step = step
+            
+    def findMods( self, **kwargs ):
+
+        deltaChi = kwargs[ 'deltaChi' ]
+
+        allModels = self.res
+        chi = self.chi
+
+        minChi = np.min( chi[ chi != 0 ][ 0 ] )
+        goodList = np.where( chi < minChi + deltaChi )[ 0 ]
+        
+        
+
+    def smartSample( self, **kwargs ):
+        stepPath = kwargs[ 'stepFile' ]
+        self.readStepFile( stepPath )
+
+        
+
+
+"""    
+
+class SmartGrid( rungrid.Grid ):
+    def __init__( self, **kwargs ):
+        pass
+"""        
 
 def main( **kwargs ):
 
@@ -39,7 +78,7 @@ if __name__ == '__main__':
     kwargs = { 'nk': 5, # number of radial bins in the profile
                'includeBHs': False, # use BHs?
                'resFilePath': 'result/res.tab', # path to res.tab
-               'gridFilePath': 'grid.in', # path to file
+               'stepFilePath': 'step.in', # path to file
                                           # determinig density grid
                'slopeFilePath': 'slope.in', # path to file determining slopes
                'bhGridFilePath': # path to file determining BH values
