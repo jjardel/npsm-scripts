@@ -27,7 +27,6 @@ class Results:
         dens = []
         slope = []
         bh = []
-        chi = []
 
         # don't crash if there isn't a res.tab file yet
         try:
@@ -43,7 +42,6 @@ class Results:
             dens.append( [ float( x ) for x in line.split()[ :nk ] ] )
             slope.append( float( line.split()[ nk + 2 ] ) )
             bh.append( float( line.split()[ nk + 1 ] ) )
-            chi.append( float( line.split()[ nk + 3 ] ) )
 
         fp.close()
 
@@ -52,7 +50,6 @@ class Results:
         self.bh = np.array( bh )
         self.res = np.column_stack( ( np.array( dens ), np.array( slope ),
                                       np.array( bh ) ) )
-        self.chi = np.array( chi )
         
         
 class Models( Results ):

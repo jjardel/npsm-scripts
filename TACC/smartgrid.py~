@@ -22,21 +22,16 @@ class SmartGrid( rungrid.Models ):
 
     def __init__( self, **kwargs ):
         self.getResults( **kwargs )
-
-        self.readSlopeFile( **kwargs )
-        if kwargs[ 'includeBHs' ]:
-            self.readBHFile( **kwargs )
-        
-        self.findMods( **kwargs )
+        self.smartSample( **kwargs )
         self.checkForDups( **kwargs )
 
     def readStepFile( self, path ):
         fp = open( path )
         step = []
-        for line in fp:
+        for line in path:
             step.append( float( line.split()[ 1 ] ) )
 
-        self.stepdata = np.array( step )
+        self.stepdata = step
 
     def readSlopeFile( self, **kwargs ):
          # slope file is one line organized as:
@@ -51,36 +46,16 @@ class SmartGrid( rungrid.Models ):
         slope += [ float( item ) for item in line[ 0:2 ] ]
         slope += [ int( line[ 2 ] ) ]
 
-        self.slopedata = slope
-
-    def readBHFile( self, **kwargs ):
-
-        bhFile = kwargs[ 'bhFilePath' ]
-        with open( bhFile ) as fp:
-            line = fp.readline().split()
-
-        bh = []
-        bh += [ float( item ) for item in line[ 0:2 ] ]
-        bh += int( line[ 2 ] )
-
-        self.bhdata = bh            
+        self.slopedata = slope   
             
     def findMods( self, **kwargs ):
 
-        stepPath = kwargs[ 'stepFilePath' ]
-        self.readStepFile( stepPath )
-
         deltaChi = kwargs[ 'deltaChi' ]
-        nk = kwargs[ 'nk' ]
 
         allModels = self.res
         chi = self.chi
         step = self.stepdata
         slopein = self.slopedata
-        if kwargs[ 'includeBHs' ]:
-            bhs = self.bhdata
-        else:
-            bhs = []
 
         minChi = np.min( chi[ chi != 0 ][ 0 ] )
         goodList = np.where( chi < minChi + deltaChi )[ 0 ]
@@ -88,26 +63,29 @@ class SmartGrid( rungrid.Models ):
         nGood = len( goodList )
         print nGood, ' models within chiLim'
 
-        dopars = np.where( step != 0 )[ 0 ]
-        npar = step.shape[ 0 ]
-
         
         # take a fractional increase of STEP above and below each point within
         # CHILIM
         todo = []
-        for i in range( 0, nGood ):
+        for i in range( 0, ngood ):
             for s in slopein:
-                for b in bhs:
-                    for k in range( -1, 2, 2 ):
-                        x = goodModels[ i, : ].copy()
-                        for j in dopars:
-                            delta = np.ones( npar )
-                            delta[ j ] = abs( k - step[ j ] )
-                            mod = goodModels[ i, : ] * delta
-                            todo.append( mod.tolist() + [ s, b ] )
+                for k in range( -1, 2, 2 ):
+                    x = goodmod[ i, : ].copy()
+                    for j in dopars:
+                        delta = ones( npar )
+                        delta[ j ] = abs( k - step[ j ] )
+                        mod = goodmod[ i, : ] * delta
+                        todo.append( mod.tolist() + slopein )
 
-        import pdb; pdb.set_trace()
+        # also get BHs in here
         
+
+        
+        
+
+    def smartSample( self, **kwargs ):
+        stepPath = kwargs[ 'stepFile' ]
+        self.readStepFile( stepPath )
 
         
 
@@ -121,10 +99,10 @@ class SmartGrid( rungrid.Grid ):
 
 def main( **kwargs ):
 
-    models = SmartGrid( **kwargs )
+    grid = Grid( **kwargs )
+    models = Models( grid.models, **kwargs )
     toRun = models.checkForDups( **kwargs )
 
-    import pdb; pdb.set_trace()
     launcher = Launcher( toRun, **kwargs )
 
     
@@ -136,13 +114,12 @@ if __name__ == '__main__':
     # EDIT PARAMETERS HERE
 
     kwargs = { 'nk': 5, # number of radial bins in the profile
-               'deltaChi': 2.0,
                'includeBHs': False, # use BHs?
                'resFilePath': 'result/res.tab', # path to res.tab
                'stepFilePath': 'step.in', # path to file
                                           # determinig density grid
                'slopeFilePath': 'slope.in', # path to file determining slopes
-               'bhGridFilePath': 'bh.in', # path to file determining BH values
+               'bhGridFilePath': # path to file determining BH values
                'sgeFilePath': 'runbatch.sge', # path to template
                                               # submission file
                'paramFilePath': 'param/mod.param.bin', # path to previous
@@ -159,12 +136,15 @@ if __name__ == '__main__':
 
 
 
-sys.exit()
 
 
 
 
 
+
+
+from numpy import *
+from pylab import *
 import os
 import sys
 import math as m
