@@ -377,7 +377,7 @@ if __name__ == '__main__':
                'gridFilePath': 'grid.in', # path to file
                                           # determinig density grid
                'slopeFilePath': 'slope.in', # path to file determining slopes
-               'bhGridFilePath':, # path to file determining BH values
+               'bhGridFilePath':'bh.in', # path to file determining BH values
                'sgeFilePath': 'runbatch.sge', # path to template
                                               # submission file
                'paramFilePath': 'param/mod.param.bin', # path to previous
