@@ -243,10 +243,10 @@ class Launcher:
 
         # need to write to slope.list and bh.list too
         slopeFilePath = modlistsDir + '/slope.list'
-        bhFilePath = modlistsDir + 'bh.list'
+        bhFilePath = modlistsDir + '/bh.list'
 
         slopeFile = open( slopeFilePath, 'a' )
-        bhFile = open( slopeFilePath, 'a' )
+        bhFile = open( bhFilePath, 'a' )
 
 
         for model in models:
@@ -264,7 +264,7 @@ class Launcher:
                                                              )
                 
                 os.chmod( batchFile.name, 0754 )
-                self.mkSubmitFile( nBatchMax, batchFile, submitFile )
+                self.mkSubmitFile( nBatchMax, batchFile.name, submitFile )
                 submitFile.close()
 
             # write out modlist file
@@ -276,7 +276,7 @@ class Launcher:
 
             # write to slope file
             sSlope = str( model[ nk ] )
-            slopeFile.write( sSlope )
+            slopeFile.write( sModel + ' ' + sSlope + '\n')
 
             # if using BH
             if kwargs[ 'includeBHs' ]:
@@ -284,7 +284,7 @@ class Launcher:
             else:
                 sBH = '0'
 
-            bhFile.write( sBH )
+            bhFile.write( sModel + ' ' + sBH + '\n')
             out = 'runall.s %(model)s %(slope)s %(bh)s \n' % { 'model': sModel,
                                                                'slope': sSlope,
                                                                'bh': sBH
@@ -299,15 +299,23 @@ class Launcher:
         bhFile.close()
 
         # need to fix the last SGE file
-        
-        
-        import pdb; pdb.set_trace()
-                
+        dummy, submitFile = self.openBatchFiles( nBatch, justSGE = True )
+        numProcs = ( kount - 1 )% nbatchmax
+        numProcs = int( m.ceil( numProcs / 12. ) * 12. )
+        batchName = submitFile.name[ :-3 ] + 's'
+        self.mkSubmitFile( numProcs, batchName, submitFile )
+        submitFile.close()
 
-    def openBatchFiles( self, nBatch, nBatchMax = None ):
+        
+    def openBatchFiles( self, nBatch, nBatchMax = None, justSGE = False ):
 
         base = 'runbatch' + str( nBatch ).rjust( 2, '0' )
-        fBatch = open( base + '.s', 'w' )
+        
+        if not justSGE:
+            fBatch = open( base + '.s', 'w' )
+        else:
+            fBatch = None
+
         fSubmit = open( base + '.sge', 'w' )
         
         return fBatch, fSubmit # each is file object designated for writing
@@ -315,10 +323,10 @@ class Launcher:
         
 
 
-    def mkSubmitFile( self, maxProcs, fBatch, fSubmit ):
+    def mkSubmitFile( self, maxProcs, batchName, fSubmit ):
         template = self.sgeTemplate
         template[ 16 ] = template[ 16 ][ :13 ] + str( maxProcs ) + '\n'
-        template[ 37 ] = template[ 37 ][ :22 ] + fBatch.name + '\n'
+        template[ 37 ] = template[ 37 ][ :22 ] + batchName + '\n'
 
         for line in template:
             fSubmit.write( line )
@@ -338,7 +346,6 @@ def main( **kwargs ):
 
     launcher = Launcher( toRun, **kwargs )
 
-    import pdb; pdb.set_trace()
     
         
         
