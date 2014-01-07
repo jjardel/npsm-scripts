@@ -9,6 +9,8 @@
 # in res.tab.  Probably best to start exploration of parameter space with a
 # brute force method like rungrid.py.
 
+# Edit kwargs in main to set parameters
+
 
 from readcol import readcol
 import numpy as np
