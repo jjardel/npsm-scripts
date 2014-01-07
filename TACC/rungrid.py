@@ -5,7 +5,18 @@ import math as m
 import os
 from itertools import product
 
+# Script to run a brute force grid of non-parametric models.
+# I usually start my search with a brute force grid of 5 points with
+# 5 values each and a monotonically decreasing profile.  Requires a
+# previous call to param2np to get the bin locations
+
+# Edit kwargs in main to change the inputs.
+
+
 class Results:
+    """
+    Read results from res.tab, or creates a new one if empty
+    """
     def __init__( self, **kwargs ):
         pass
 
@@ -16,8 +27,17 @@ class Results:
         dens = []
         slope = []
         bh = []
+
+        # don't crash if there isn't a res.tab file yet
+        try:
+            fp = open( filename )
+        except IOError:
+            print 'no res.tab found'
+            print 'starting one at ' + filename
+
+            fp = open( filename, 'w' )
+            fp.close()
         
-        fp = open( filename )
         for line in fp:
             dens.append( [ float( x ) for x in line.split()[ :nk ] ] )
             slope.append( float( line.split()[ nk + 2 ] ) )
@@ -33,6 +53,10 @@ class Results:
         
         
 class Models( Results ):
+    """
+    Takes new models determined by Grid instance, and removes duplicates
+    and profiles that don't decrease monotonically if requested.
+    """
 
     def __init__( self, allModels, **kwargs ):
         self.allModels = allModels
@@ -73,6 +97,14 @@ class Models( Results ):
 
 
 class Grid:
+    """
+    Sets up a grid of models to be run by sampling all the combinatorics
+    of the density values in grid.in, slope values in slope.in, and BH values
+    in bh.in (if selected).
+
+    See read methods for details on how input files are organized
+    """
+    
     def __init__( self, **kwargs ):
         self.readParamFiles( **kwargs )
         self.getCombinations( **kwargs )
@@ -126,7 +158,7 @@ class Grid:
         # BH file is one line organized as :
         # BHstart BHend, nBHs
 
-        bhFile = kwargs[ 'bhFilePath' ]
+        bhFile = kwargs[ 'bhGridFilePath' ]
 
         with open( bhFile ) as fp:
             line = fp.readline().split()
@@ -181,8 +213,13 @@ class Grid:
 
 class Launcher:
 
+    """
+    Does the work to setup .sge and .s batch scripts for a parametric
+    sweep on Lonestar.  Edit mkSubmitFile() to adapt for Stampede
+    """
+
     def __init__( self, modelsToRun, **kwargs ):
-        self.models = modelsToRun
+        self.models = modelsToRun # list of models to run
         self.initializeScripts( **kwargs )
 
         self.loopOverModels( nBatchMax = 96, **kwargs )
@@ -221,7 +258,7 @@ class Launcher:
 
 
     def loopOverModels( self, nBatchMax = None, **kwargs ):
-        models = self.models
+        models = self.models # each row is [ density[ nk ], slope, bh ]
         modlistsDir = kwargs[ 'modlistsDir' ]
         nk = kwargs[ 'nk' ]
 
@@ -332,16 +369,23 @@ def main( **kwargs ):
         
 if __name__ == '__main__':
 
-    kwargs = { 'nk': 5,
-               'includeBHs': False,
-               'resFilePath': 'result/res.tab',
-               'gridFilePath': 'grid.in',
-               'slopeFilePath': 'slope.in',
-               'sgeFilePath': 'runbatch.sge',
-               'paramFilePath': 'param/mod.param.bin',
-               'modlistsDir': './modlists',
-               'monotonic': True,
-               'tol':  5e-2
+    # EDIT PARAMETERS HERE
+
+    kwargs = { 'nk': 5, # number of radial bins in the profile
+               'includeBHs': False, # use BHs?
+               'resFilePath': 'result/res.tab', # path to res.tab
+               'gridFilePath': 'grid.in', # path to file
+                                          # determinig density grid
+               'slopeFilePath': 'slope.in', # path to file determining slopes
+               'bhGridFilePath': # path to file determining BH values
+               'sgeFilePath': 'runbatch.sge', # path to template
+                                              # submission file
+               'paramFilePath': 'param/mod.param.bin', # path to previous
+                                                       # output of param2np
+               'modlistsDir': './modlists', # path to modlists directory
+               'monotonic': True, # only monotonically decreasing profiles?
+               'tol':  5e-2 # relative tolerance for considering
+                            # two profiles equal
                }
 
     main( **kwargs )
