@@ -251,6 +251,13 @@ class Launcher:
 
         for model in models:
             if kount % nBatchMax == 1:
+
+                # sloppy way to close the first batch file
+                try:
+                    batchFile.close()
+                except:
+                    pass
+                
                 nBatch += 1
                 batchFile, submitFile = self.openBatchFiles( nBatch,
                                                              nBatchMax = nBatchMax
@@ -258,42 +265,43 @@ class Launcher:
                 
                 os.chmod( batchFile.name, 0754 )
                 self.mkSubmitFile( nBatchMax, batchFile, submitFile )
+                submitFile.close()
 
-            import pdb; pdb.set_trace()
             # write out modlist file
-
             sModel = str( i ).rjust( 5, '0' )
             
             modFile = modlistsDir + '/model' + sModel
-            out = np.column_stack( ( self.radius, model ) )
+            out = np.column_stack( ( self.radius, model[ :nk ] ) )
             np.savetxt( modFile, out, fmt = '%-5.5f %-5.5e' )
 
             # write to slope file
-            sSlope = str( model[ nk + 1 ] ) + '\n'
+            sSlope = str( model[ nk ] )
             slopeFile.write( sSlope )
 
             # if using BH
-            try:
-                sBH = ':e5.5 \n'.format( model[ nk + 2 ] )
-            except IndexError:
-                print 'Are you sure you want to use a black hole?'
-                sBH = '0\n'
+            if kwargs[ 'includeBHs' ]:
+                sBH = ':e5.5'.format( model[ nk + 1 ] )
+            else:
+                sBH = '0'
 
             bhFile.write( sBH )
-            out = 'runall.s %(model) %(slope) %(bh)\n' % { 'model': sModel,
-                                                           'slope': sSlope,
-                                                           'bh': sBH
-                                                           }
+            out = 'runall.s %(model)s %(slope)s %(bh)s \n' % { 'model': sModel,
+                                                               'slope': sSlope,
+                                                               'bh': sBH
+                                                               }
 
-            fBatch.write( out ) # write the line in runbatchXX.s
+            batchFile.write( out ) # write the line in runbatchXX.s
+            i += 1
+            kount += 1
+            
+        batchFile.close()
+        slopeFile.close()
+        bhFile.close()
 
-            
-            
-
-            
-            
-
-            import pdb; pdb.set_trace()
+        # need to fix the last SGE file
+        
+        
+        import pdb; pdb.set_trace()
                 
 
     def openBatchFiles( self, nBatch, nBatchMax = None ):
