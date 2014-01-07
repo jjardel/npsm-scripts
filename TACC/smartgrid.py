@@ -10,11 +10,62 @@
 # brute force method like rungrid.py.
 
 
-
-
-
-
 from readcol import readcol
+import numpy as np
+import sys
+import math as m
+import os
+from itertools import product
+import rungrid
+    
+class SmartGrid( rungrid.Grid )
+
+def main( **kwargs ):
+
+    grid = Grid( **kwargs )
+    models = Models( grid.models, **kwargs )
+    toRun = models.checkForDups( **kwargs )
+
+    launcher = Launcher( toRun, **kwargs )
+
+    
+        
+        
+        
+if __name__ == '__main__':
+
+    # EDIT PARAMETERS HERE
+
+    kwargs = { 'nk': 5, # number of radial bins in the profile
+               'includeBHs': False, # use BHs?
+               'resFilePath': 'result/res.tab', # path to res.tab
+               'gridFilePath': 'grid.in', # path to file
+                                          # determinig density grid
+               'slopeFilePath': 'slope.in', # path to file determining slopes
+               'bhGridFilePath': # path to file determining BH values
+               'sgeFilePath': 'runbatch.sge', # path to template
+                                              # submission file
+               'paramFilePath': 'param/mod.param.bin', # path to previous
+                                                       # output of param2np
+               'modlistsDir': './modlists', # path to modlists directory
+               'monotonic': True, # only monotonically decreasing profiles?
+               'tol':  5e-2 # relative tolerance for considering
+                            # two profiles equal
+               }
+
+    main( **kwargs )
+    
+
+
+
+
+
+
+
+
+
+
+
 from numpy import *
 from pylab import *
 import os
