@@ -328,7 +328,7 @@ class Launcher:
 
         # need to fix the last SGE file
         dummy, submitFile = self.openBatchFiles( nBatch, justSGE = True )
-        numProcs = ( kount - 1 )% nbatchmax
+        numProcs = ( kount - 1 )% nBatchMax
         numProcs = int( m.ceil( numProcs / 12. ) * 12. )
         batchName = submitFile.name[ :-3 ] + 's'
         self.mkSubmitFile( numProcs, batchName, submitFile )
