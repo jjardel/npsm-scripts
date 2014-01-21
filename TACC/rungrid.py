@@ -38,6 +38,7 @@ class Results:
 
             fp = open( filename, 'w' )
             fp.close()
+            fp = open( filename )
         
         for line in fp:
             dens.append( [ float( x ) for x in line.split()[ :nk ] ] )
