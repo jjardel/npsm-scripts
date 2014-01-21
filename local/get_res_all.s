@@ -16,6 +16,8 @@ scp $TACC/work/01208/jardel/sculptor/npsm/result/chi_sculptor.out .
 scp $TACC/work/01208/jardel/sculptor/npsm/result/chi_sculptor_multi.out .
 scp $TACC/work/01208/jardel/sextans/npsm/result/chi_sextans.out .
 scp $TACC/work/01208/jardel/sextans/npsm/result/chi_sextans_multi.out .
+scp $TACC/work/01208/jardel/super/npsm/result/chi_super_multi.out .
+scp $TACC/work/01208/jardel/super/npsm/result/chi_super.out .
 	
 
 # copy appropriate input files for dsphdm2
@@ -26,6 +28,7 @@ set CARINA = $BASE/carina/cmd
 set FORNAX = $BASE/fornax/cmd
 set SCULPTOR = $BASE/sculptor/cmd
 set SEXTANS = $BASE/sex/cmd
+set SUPER = $BASE/super_scaled/cmd
 
 cp $DRACO/dsphdm2.py .
 cp $DRACO/light.dat .
@@ -52,3 +55,7 @@ cp $SEXTANS/light.dat .
 cp chi_sextans.out chi.out
 python dsphdm2.py
 
+cp $SUPER/dsphdm2.py .
+cp $SUPER/light.dat .
+cp chi_super.out chi.out
+python dsphdm2.py
