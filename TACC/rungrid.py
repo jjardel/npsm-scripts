@@ -27,6 +27,7 @@ class Results:
         dens = []
         slope = []
         bh = []
+        chi = []
 
         # don't crash if there isn't a res.tab file yet
         try:
@@ -42,6 +43,7 @@ class Results:
             dens.append( [ float( x ) for x in line.split()[ :nk ] ] )
             slope.append( float( line.split()[ nk + 2 ] ) )
             bh.append( float( line.split()[ nk + 1 ] ) )
+            chi.append( float( line.split()[ nk + 3 ] ) )
 
         fp.close()
 
@@ -50,6 +52,7 @@ class Results:
         self.bh = np.array( bh )
         self.res = np.column_stack( ( np.array( dens ), np.array( slope ),
                                       np.array( bh ) ) )
+        self.chi = np.array( chi )
         
         
 class Models( Results ):
@@ -325,7 +328,7 @@ class Launcher:
 
         # need to fix the last SGE file
         dummy, submitFile = self.openBatchFiles( nBatch, justSGE = True )
-        numProcs = ( kount - 1 )% nbatchmax
+        numProcs = ( kount - 1 )% nBatchMax
         numProcs = int( m.ceil( numProcs / 12. ) * 12. )
         batchName = submitFile.name[ :-3 ] + 's'
         self.mkSubmitFile( numProcs, batchName, submitFile )
@@ -377,7 +380,7 @@ if __name__ == '__main__':
                'gridFilePath': 'grid.in', # path to file
                                           # determinig density grid
                'slopeFilePath': 'slope.in', # path to file determining slopes
-               'bhGridFilePath': # path to file determining BH values
+               'bhGridFilePath':'bh.in', # path to file determining BH values
                'sgeFilePath': 'runbatch.sge', # path to template
                                               # submission file
                'paramFilePath': 'param/mod.param.bin', # path to previous

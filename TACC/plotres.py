@@ -42,6 +42,7 @@ alldens = zeros( ( nmod, nk ) )
 allchi = zeros( nmod )
 slope = zeros( nmod )
 allmod = zeros( nmod )
+allBH = zeros( nmod )
 
 ii = 0
 for line in resin:
@@ -49,6 +50,7 @@ for line in resin:
     slope[ ii ] = float( line.split()[ nk + 2 ] )
     alldens[ ii, : ] = [ float( j ) for j in line.split()[ :nk ] ]
     allmod[ ii ] = int( line.split()[ nk ] )
+    allBH[ ii ] = float( line.split()[ nk + 1 ] )
     ii += 1
 chimin = min( allchi )
 imin = where( allchi == chimin )[ 0 ]
@@ -172,3 +174,45 @@ loglog( x1, y1, 'k' )
 loglog( r, bestdens, 'r' )
 
 savefig( 'dens2.ps' )
+
+# now for the BH (NOT TESTED WELL)
+
+usingBH = True
+try:
+    fp = open( 'bh.npoints.in' )
+except:
+    print 'not using a BH'
+    usingBH = False
+    
+if usingBH:
+    for line in fp:
+        ns = int( line.split()[ 1 ] ) 
+        nbox = int( line.split()[ 2 ] ) 
+        nbest = int( line.split()[ 3 ] ) 
+    fp.close()
+
+    x = allBH
+    y = allchi
+
+
+    xhat = logspace(  math.log10( .9 * min( x ) ),
+                     math.log10( 1.1 * max( x ) ) ,
+                      num = npoints )
+    ym = zeros( npoints ) -1.
+    xm = zeros( npoints ) -1.
+    ij = 0
+    # compute the sliding biweight of each bin
+    for ii in range( nbox, xhat.size ):
+        inbin = where( ( xa >= xhat[ ii - nbox ] ) & ( xa < xhat[ ii ] ) )
+        if( len( inbin[ 0 ] ) > nbest ):
+            best = sorted( ya[ inbin[ 0 ] ] )[ :nbest ]
+            ym[ ii ] = biweightMean( array( best ) )
+            xm[ ii ] = median( [ xhat[ ii - nbox ], xhat[ ii ] ] )
+    ym2 = interp( xhat, xm[ xm > 0 ], ym[ ym > 0 ] )
+    xm2 = xhat
+    ym2min = min( ym2 )
+
+    clf()
+    semilogx( x, y, 'k.' )
+    semilogx( xm2, ym2, 'r' )
+    savefig( 'bh.ps' )
