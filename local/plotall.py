@@ -5,10 +5,8 @@ plt.clf()
 fig = plt.figure()
 
 
-gallist = [ 'Fornax', 'Carina', 'Sextans', 'Sculptor', 'Draco' ]
+gallist = [ 'All', 'Fornax', 'Carina', 'Sextans', 'Sculptor', 'Draco' ]
 gallist.sort()
-
-gallist.insert( 0, 'Combined' )
 
 #plt.subplot( 2, 3, 1 ).axis( 'off' )
 

@@ -12,7 +12,7 @@ import csv
 
 
 
-class ChiPlotter:
+class ChiPlotter:
     def __init__( self, galname, scalingFile, deltaChiBase = None ):
         self.galname = galname
         self.scaling = self.get_scaling( scalingFile )
