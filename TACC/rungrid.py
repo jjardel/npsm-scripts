@@ -224,6 +224,8 @@ class Launcher:
 
     def __init__( self, modelsToRun, **kwargs ):
         self.models = modelsToRun # list of models to run
+        print len( modelsToRun ), 'models to run'
+        
         self.initializeScripts( **kwargs )
 
         self.loopOverModels( nBatchMax = 96, **kwargs )
