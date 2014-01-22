@@ -301,7 +301,7 @@ class Launcher:
             # write out modlist file
             sModel = str( i ).rjust( 5, '0' )
             
-            modFile = modlistsDir + '/model' + sModel
+            modFile = modlistsDir + '/model' + sModel + '.bin'
             out = np.column_stack( ( self.radius, model[ :nk ] ) )
             np.savetxt( modFile, out, fmt = '%-5.5f %-5.5e' )
 
