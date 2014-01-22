@@ -121,6 +121,9 @@ class SmartGrid( rungrid.Models ):
             bhs = [ 0. ]
 
         minChi = np.min( chi[ chi != 0 ] )
+
+        print 'minimum chi^2 is ', minChi
+        
         goodList = np.where( chi < minChi + deltaChi )[ 0 ]
         goodModels = allModels[ goodList, :nk ]
         nGood = len( goodList )
