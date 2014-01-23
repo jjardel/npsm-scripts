@@ -89,14 +89,24 @@ class Models( Results ):
         # check if model to be run is close to a model in res.tab
         
         tol = kwargs[ 'tol' ]
-        flag = True
 
-        for a, b in zip( testMod, resMod ):
+        for a, b in zip( testMod[ :-1 ], resMod[ :-1 ] ):
             if abs( float( a ) / b - 1 ) > tol:
                 return False
 
+        # BH values can be zero so we have to dance around this
+        
+        testBH = testMod[ kwargs[ 'nk' ] + 1 ]
+        resBH = resMod[ kwargs[ 'nk' ] + 1 ]
 
-        return flag
+        if testBH == 0 and resBH == 0:
+            return True
+
+        if testBH != 0:
+            if abs( testBH - resBH ) / testBH > tol:
+                return False
+
+        return True
 
 
 
