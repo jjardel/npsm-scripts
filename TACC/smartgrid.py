@@ -154,7 +154,7 @@ class SmartGrid( rungrid.Models ):
         if len( todo ) > kwargs[ 'maxModels' ]:
             self.call_me_maybe()
 
-        if todo == []:
+        if len( todo ) == 0:
             os.system( 'crontab -r' )
             failfile = open( 'fail.warn', 'w' )
             failfile.write( 'FAIL: NO NEW MODELS' )
