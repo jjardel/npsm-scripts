@@ -191,9 +191,8 @@ if __name__ == '__main__':
                                                        # output of param2np
                'modlistsDir': './modlists', # path to modlists directory
                'monotonic': True, # only monotonically decreasing profiles?
-               'tol':  5e-2, # relative tolerance for considering
+               'tol':  5e-2 # relative tolerance for considering
                             # two profiles equal
-               'waitForApproval': False
                }
 
     main( **kwargs )

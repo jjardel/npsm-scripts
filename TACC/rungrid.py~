@@ -235,10 +235,6 @@ class Launcher:
     def __init__( self, modelsToRun, **kwargs ):
         self.models = modelsToRun # list of models to run
         print len( modelsToRun ), 'models to run'
-        if kwargs[ 'waitForApproval' ]:
-            inp = raw_input( 'Is this ok? [y/n]' )
-            if inp.lower.() != 'y':
-                sys.exit()
         
         self.initializeScripts( **kwargs )
 
@@ -404,9 +400,8 @@ if __name__ == '__main__':
                                                        # output of param2np
                'modlistsDir': './modlists', # path to modlists directory
                'monotonic': True, # only monotonically decreasing profiles?
-               'tol':  5e-2, # relative tolerance for considering
+               'tol':  5e-2 # relative tolerance for considering
                             # two profiles equal
-               'waitForApproval': True
                }
 
     main( **kwargs )
