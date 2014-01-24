@@ -237,7 +237,7 @@ class Launcher:
         print len( modelsToRun ), 'models to run'
         if kwargs[ 'waitForApproval' ]:
             inp = raw_input( 'Is this ok? [y/n]' )
-            if inp.lower.() != 'y':
+            if inp.lower() != 'y':
                 sys.exit()
         
         self.initializeScripts( **kwargs )
