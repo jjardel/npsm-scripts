@@ -72,36 +72,6 @@ class SmartGrid( rungrid.Models ):
         return unique_a.view(a.dtype).reshape((unique_a.shape[0], a.shape[1]))
 
     
-    def call_me_maybe( self ):
-
-        fromaddr = 'johnjardel@gmail.com'
-        toaddrs  = 'jardel@astro.as.utexas.edu'
-        msg = '''
-        From: LONESTAR
-        Subject: Error in smartgrid_auto
-
-        There are more models than you probably want to run so I stopped the script.'''
-
-
-        # Credentials (if needed)
-        username = 'johnjardel'
-        pfil = open( '/home1/01208/jardel/pfile.in' )
-        password = pfil.readline()
-
-        # The actual mail send
-        server = smtplib.SMTP('smtp.gmail.com:587')
-        server.starttls()
-        server.login(username,password)
-        server.sendmail(fromaddr, toaddrs, msg)
-        server.quit()
-
-        os.system( 'crontab -r' )
-        failfile = open( 'fail.warn', 'w' )
-        failfile.write( 'FAIL: EXCESSIVE MODELS' )
-        failfile.close()
-
-        raise LaunchError( 'Too many models' )
-    
             
     def findMods( self, **kwargs ):
 
@@ -151,21 +121,54 @@ class SmartGrid( rungrid.Models ):
         todo = self.unique_rows( np.array( todo ) ).tolist()
         self.allModels = todo
 
-        if len( todo ) > kwargs[ 'maxModels' ]:
-            self.call_me_maybe()
 
-        if len( todo ) == 0:
-            os.system( 'crontab -r' )
-            failfile = open( 'fail.warn', 'w' )
-            failfile.write( 'FAIL: NO NEW MODELS' )
-            failfile.close()
+def call_me_maybe( self ):
 
-            raise LaunchError( 'No new models' )
+    fromaddr = 'johnjardel@gmail.com'
+    toaddrs  = 'jardel@astro.as.utexas.edu'
+    msg = '''
+    From: LONESTAR
+    Subject: Error in smartgrid_auto
+
+    There are more models than you probably want to run so I stopped the script.'''
+
+
+    # Credentials (if needed)
+    username = 'johnjardel'
+    pfil = open( '/home1/01208/jardel/pfile.in' )
+    password = pfil.readline()
+
+    # The actual mail send
+    server = smtplib.SMTP('smtp.gmail.com:587')
+    server.starttls()
+    server.login(username,password)
+    server.sendmail(fromaddr, toaddrs, msg)
+    server.quit()
+
+    os.system( 'crontab -r' )
+    failfile = open( 'fail.warn', 'w' )
+    failfile.write( 'FAIL: EXCESSIVE MODELS' )
+    failfile.close()
+
+    raise LaunchError( 'Too many models' )
+
 
 def main( **kwargs ):
 
     models = SmartGrid( **kwargs )
     toRun = models.checkForDups( **kwargs )
+
+    if len( toRun ) > kwargs[ 'maxModels' ]:
+        call_me_maybe()
+
+    if len( toRun ) == 0:
+        os.system( 'crontab -r' )
+        failfile = open( 'fail.warn', 'w' )
+        failfile.write( 'FAIL: NO NEW MODELS' )
+        failfile.close()
+
+        raise RuntimeError( 'No new models' )
+    
     launcher = rungrid.Launcher( toRun, **kwargs )
 
     
