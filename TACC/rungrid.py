@@ -90,11 +90,15 @@ class Models( Results ):
         
         tol = kwargs[ 'tol' ]
 
-        for a, b in zip( testMod[ :-1 ], resMod[ :-1 ] ):
+        for a, b in zip( testMod, resMod ):
             if abs( float( a ) / b - 1 ) > tol:
                 return False
 
+        # BH is not in testMod
+        """
         # BH values can be zero so we have to dance around this
+
+        print testMod
         
         testBH = testMod[ kwargs[ 'nk' ] + 1 ]
         resBH = resMod[ kwargs[ 'nk' ] + 1 ]
@@ -105,7 +109,7 @@ class Models( Results ):
         if testBH != 0:
             if abs( testBH - resBH ) / testBH > tol:
                 return False
-
+        """
         return True
 
 
