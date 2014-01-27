@@ -351,6 +351,11 @@ class Launcher:
         dummy, submitFile = self.openBatchFiles( nBatch, justSGE = True )
         numProcs = ( kount - 1 )% nBatchMax
         numProcs = int( m.ceil( numProcs / 12. ) * 12. )
+
+        # kluge for now
+        if numProcs = 0:
+            numProcs = nBatchMax
+
         batchName = submitFile.name[ :-3 ] + 's'
         self.mkSubmitFile( numProcs, batchName, submitFile )
         submitFile.close()
