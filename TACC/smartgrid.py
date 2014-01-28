@@ -71,7 +71,6 @@ class SmartGrid( rungrid.Models ):
         unique_a = np.unique(a.view([('', a.dtype)]*a.shape[1]))
         return unique_a.view(a.dtype).reshape((unique_a.shape[0], a.shape[1]))
 
-    
             
     def findMods( self, **kwargs ):
 
@@ -120,6 +119,18 @@ class SmartGrid( rungrid.Models ):
         # a ridiculous way to remove duplicates from res.tab
         todo = self.unique_rows( np.array( todo ) ).tolist()
         self.allModels = todo
+
+        if kwargs[ 'monotonic' ]:
+            monoModels = []
+            for i in todo:
+                if list( i[ :nk ] ) == sorted( i[ :nk ],
+                                               reverse = True ):
+                    monoModels.append( list( i ) )
+
+            self.allModels = monoModels
+            
+        
+
 
 
 def call_me_maybe( self ):
@@ -180,7 +191,7 @@ if __name__ == '__main__':
     # EDIT PARAMETERS HERE
 
     kwargs = { 'nk': 5, # number of radial bins in the profile
-               'deltaChi': 2.0, # delta chi^2 threshold above chiMin
+               'deltaChi': 6.0, # delta chi^2 threshold above chiMin
                'maxModels': 2000, # abort if number of models is greater
                'includeBHs': False, # use BHs?
                'resFilePath': 'result/res.tab', # path to res.tab
