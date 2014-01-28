@@ -353,7 +353,7 @@ class Launcher:
         numProcs = int( m.ceil( numProcs / 12. ) * 12. )
 
         # kluge for now
-        if numProcs = 0:
+        if numProcs == 0:
             numProcs = nBatchMax
 
         batchName = submitFile.name[ :-3 ] + 's'
