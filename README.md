@@ -17,8 +17,8 @@ This repo is divided into 3 sections:
             
 DESCRIPTIONS:
 
---------------------------------------------------------------------------------
 1.  TACC
+--------------------------------------------------------------------------------
 
 plotres.py - Main analysis routine to determine dark matter densities and 
              corresponding uncertainties.  Computes them from sliding biweight
