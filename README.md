@@ -53,6 +53,9 @@ update_db.py - Inserts results from a model into the PostgreSQL database on
 
 runall.s - Main driver script to run NPSM.
 
+Add mplot, mk_mplot4p.py, and run_master_mplot.csh
+
+
 2.  local
 --------------------------------------------------------------------------------
 
