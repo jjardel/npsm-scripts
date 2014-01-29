@@ -53,7 +53,14 @@ update_db.py - Inserts results from a model into the PostgreSQL database on
 
 runall.s - Main driver script to run NPSM.
 
-Add mplot, mk_mplot4p.py, and run_master_mplot.csh
+mplot.py - Makes individual M(r) and circular speed plots for a single dSph.
+	   Also plots location of the Wolf et al. (2010) mass estimator for
+	   comparison to the full profile.
+
+mk_mplot4p.py - Makes a 4-panel grid of M(r) plots.
+
+run_master_mplot.csh - Shell script to do the legwork necessary to run 
+	               mplot.py and mk_mplot4p.py.
 
 
 2.  local
