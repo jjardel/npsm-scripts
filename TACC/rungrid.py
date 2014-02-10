@@ -183,7 +183,7 @@ class Grid:
 
         bh = []
         bh += [ float( item ) for item in line[ 0:2 ] ]
-        bh += int( line[ 2 ] )
+        bh += [ int( line[ 2 ] ) ]
 
         self.bhdata = bh
 
@@ -204,8 +204,8 @@ class Grid:
 
         #add BHs
         if kwargs[ 'includeBHs' ]:
-            bhs = slopes.bhdata
-            x = np.logpace( np.log10( bhs[ 0 ] ), np.log10( bhs[ 1 ] ),
+            bhs = self.bhdata
+            x = np.logspace( np.log10( bhs[ 0 ] ), np.log10( bhs[ 1 ] ),
                             num = bhs[ 2 ] )
             arg.append( x.tolist() )
 
