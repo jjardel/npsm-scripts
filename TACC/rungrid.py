@@ -329,7 +329,7 @@ class Launcher:
 
             # if using BH
             if kwargs[ 'includeBHs' ]:
-                sBH = ':e5.5'.format( model[ nk + 1 ] )
+                sBH = '%5.2e'% model[ nk + 1 ]
             else:
                 sBH = '0'
 
