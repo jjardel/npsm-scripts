@@ -16,13 +16,13 @@ scp $TACC/work/01208/jardel/sculptor/npsm/result/chi_sculptor.out .
 scp $TACC/work/01208/jardel/sculptor/npsm/result/chi_sculptor_multi.out .
 scp $TACC/work/01208/jardel/sextans/npsm/result/chi_sextans.out .
 scp $TACC/work/01208/jardel/sextans/npsm/result/chi_sextans_multi.out .
-scp $TACC/work/01208/jardel/super/npsm/result/chi_super_multi.out .
-scp $TACC/work/01208/jardel/super/npsm/result/chi_super.out .
+scp $TACC/work/01208/jardel/super_scaled/result/chi_all_multi.out .
+scp $TACC/work/01208/jardel/super_scaled/result/chi_all.out .
 	
 
 # copy appropriate input files for dsphdm2
 
-set BASE = /home/jardel/research
+set BASE = /Users/jardel/research
 set DRACO = $BASE/draco/cmd/new/aasplot
 set CARINA = $BASE/carina/cmd
 set FORNAX = $BASE/fornax/cmd
@@ -57,5 +57,5 @@ python dsphdm2.py
 
 cp $SUPER/dsphdm2.py .
 cp $SUPER/light.dat .
-cp chi_super.out chi.out
+cp chi_all.out chi.out
 python dsphdm2.py
