@@ -57,13 +57,13 @@ class SmartGrid( rungrid.Models ):
 
     def readBHFile( self, **kwargs ):
 
-        bhFile = kwargs[ 'bhFilePath' ]
-        with open( bhFile ) as fp:
+        bhFile = kwargs[ 'bhGridFilePath' ]
+        with open( bhGridFile ) as fp:
             line = fp.readline().split()
 
         bh = []
         bh += [ float( item ) for item in line[ 0:2 ] ]
-        bh += int( line[ 2 ] )
+        bh += [ int( line[ 2 ] ) ]
 
         self.bhdata = bh            
 
@@ -191,7 +191,7 @@ if __name__ == '__main__':
     # EDIT PARAMETERS HERE
 
     kwargs = { 'nk': 5, # number of radial bins in the profile
-               'deltaChi': 6.0, # delta chi^2 threshold above chiMin
+               'deltaChi': 2.0, # delta chi^2 threshold above chiMin
                'maxModels': 2000, # abort if number of models is greater
                'includeBHs': False, # use BHs?
                'resFilePath': 'result/res.tab', # path to res.tab
