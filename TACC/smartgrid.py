@@ -85,7 +85,9 @@ class SmartGrid( rungrid.Models ):
         step = self.stepdata
         slopein = self.slopedata
         if kwargs[ 'includeBHs' ]:
-            bhs = self.bhdata
+            bhdata = self.bhdata
+            bhs = np.logspace( np.log10( bhdata[ 0 ] ), np.log10( bhdata[ 1 ] ),
+                            num = bhdata[ 2 ] )
         else:
             bhs = [ 0. ]
 
