@@ -15,7 +15,7 @@ cd $libn
 cp -r $base/* .
 cp $base/../modlists/model${1}.bin .
 	
-#model of the stars
+# Building gden
 ./gden_NP.x << eof
 super.gden
 10.

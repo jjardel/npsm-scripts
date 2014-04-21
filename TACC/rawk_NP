@@ -1,0 +1,13 @@
+name=$1
+awk 'NR==4 {print $4}' ${name} > t1
+awk 'NR==3 {print $1}' ${name} > t1b
+awk 'NR==1 {print $1}' ${name} > t1c
+awk 'NR==8 {print $4}' ${name} > t2b
+awk 'NR==7 {print $1}' ${name} > t2c
+awk 'NR==4 {print $1}' ${name} > t3b
+
+paste t3b t1 t1b t2b t2c t1c| awk '{print $1,$2,$3,$4,$5}' > t3
+echo ${name} > t1
+paste t1 t3 slope.dat | awk '{print $1,$2,$6,$3,$4,$5}' > t2
+sed s/"res.mod"/""/ t2 > t1
+mv t1 "c"${name}
